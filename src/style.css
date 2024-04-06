@@ -1,0 +1,56 @@
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.grid-container {
+  display: flex;
+  height: 100%;
+}
+
+.full-width {
+  flex-grow: 1;
+  flex: 1 1 80%;
+  background-color: #dbe18a;
+  border-radius: 50px;
+  margin: 10px;
+}
+
+.side-section {
+  flex: 1 0 20%;
+  background-color: #ec8c8c;
+  border-radius: 50px;
+  margin: 10px;
+}
+
+
+
+
+
+@media screen and (max-width: 768px) {
+  .side-section {
+    flex-basis: auto;
+  }
+}
+
+
+/* Animation for moving circle */
+@keyframes moveCircle {
+  0%, 100% {
+    top: 0;
+  }
+  50% {
+    top: calc(100% - 50px); /* Adjust height as needed */
+  }
+}
+
+/* Styles for the moving circle image */
+#moving-circle {
+  position: absolute;
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
+  animation: moveCircle 4s ease-in-out infinite; /* Adjust animation duration as needed */
+}
