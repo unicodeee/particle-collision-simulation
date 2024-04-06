@@ -14,7 +14,7 @@ body, html {
 .full-width {
   flex-grow: 1;
   flex: 1 1 80%;
-  background-color: #dbe18a;
+  background-color: #4a60da;
   border-radius: 50px;
   margin: 10px;
 }
@@ -24,6 +24,18 @@ body, html {
   background-color: #ec8c8c;
   border-radius: 50px;
   margin: 10px;
+}
+
+.circle {
+  /*position: absolute;*/
+  /*width: 20px;*/
+  /*height: 20px;*/
+  /*border-radius: 50%;*/
+  /*background-color: red;*/
+
+  position: absolute;
+  width: 50px; /* Adjust size as needed */
+  height: 50px; /* Adjust size as needed */
 }
 
 
