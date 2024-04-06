@@ -8,13 +8,18 @@ body, html {
 }
 
 .grid-container {
-  display: flex;
+  display: grid;
+  gap: 1rem;
+
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-auto-rows: 240px;
   height: 100%;
 }
 
 .full-width {
   /*flex-grow: ;*/
-  flex: 0 0 80%;
+  /*flex: 0 0 80%;*/
+  grid-row: span 2 / auto;
   background-color: #4a60da;
   border-radius: 10px;
   margin: 10px;
