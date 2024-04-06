@@ -1,4 +1,4 @@
-export function showFPS(fpsDisplay: HTMLDivElement, frameCount: number, lastTime: number) {
+export function showFPS(fpsDisplay: HTMLElement, frameCount: number, lastTime: number) {
     const currentTime = performance.now();
     const deltaTime = currentTime - lastTime;
     const fps = 1000 / deltaTime;

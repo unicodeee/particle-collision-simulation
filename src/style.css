@@ -4,6 +4,7 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
+  background: #340606;
 }
 
 .grid-container {
@@ -12,33 +13,39 @@ body, html {
 }
 
 .full-width {
-  flex-grow: 1;
-  flex: 1 1 80%;
+  /*flex-grow: ;*/
+  flex: 0 0 80%;
   background-color: #4a60da;
-  border-radius: 50px;
+  border-radius: 10px;
   margin: 10px;
+  display: flex;
 }
 
 .side-section {
   flex: 1 0 20%;
   background-color: #ec8c8c;
-  border-radius: 50px;
+  border-radius: 10px;
   margin: 10px;
 }
 
 .circle {
-  /*position: absolute;*/
-  /*width: 20px;*/
-  /*height: 20px;*/
-  /*border-radius: 50%;*/
-  /*background-color: red;*/
-
   position: absolute;
-  width: 50px; /* Adjust size as needed */
-  height: 50px; /* Adjust size as needed */
+  width: 10px; /* Adjust size as needed */
+  height: 10px; /* Adjust size as needed */
 }
 
 
+#fps-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #340606;
+  transform: scale(5);
+}
 
 
 
@@ -46,23 +53,4 @@ body, html {
   .side-section {
     flex-basis: auto;
   }
-}
-
-
-/* Animation for moving circle */
-@keyframes moveCircle {
-  0%, 100% {
-    top: 0;
-  }
-  50% {
-    top: calc(100% - 50px); /* Adjust height as needed */
-  }
-}
-
-/* Styles for the moving circle image */
-#moving-circle {
-  position: absolute;
-  width: 50px; /* Adjust size as needed */
-  height: 50px; /* Adjust size as needed */
-  animation: moveCircle 4s ease-in-out infinite; /* Adjust animation duration as needed */
 }
