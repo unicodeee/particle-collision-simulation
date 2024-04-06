@@ -8,7 +8,7 @@ export class Circle {
 
     constructor(centerSectionRect: DOMRect) {
         this.element = document.createElement('img');
-        this.element.src = '/public/circle.png';
+        this.element.src = '/circle.png';
         this.element.alt = 'Circle';
         this.element.className = 'circle';
 
