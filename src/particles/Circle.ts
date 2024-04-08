@@ -49,21 +49,4 @@ export class Circle {
         this.updatePosition(); // Update circle's position
     }
 
-    // move() {
-    //     this.x += this.speedX;
-    //     this.y += this.speedY;
-    //
-    //     // If circle hits the boundary, reverse its direction
-    //     if (this.x < 0 || this.x > this.centerSectionRect.right - 100) {
-    //         console.log("right: ", this.centerSectionRect.right )
-    //
-    //         this.speedX = -this.speedX;
-    //     }
-    //     if (this.y < 0 || this.y > this.centerSectionRect.bottom) {
-    //         this.speedY = -this.speedY;
-    //     }
-    //
-    //     this.updatePosition(); // Update circle's position
-    // }
-
 }
