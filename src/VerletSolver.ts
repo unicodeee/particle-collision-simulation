@@ -3,7 +3,7 @@ import * as THREE from "three";
 import {VerletObject} from "./particles/VerletObj.ts";
 
 export class VerletSolver {
-    gravity = new THREE.Vector2(0, 500);
+    gravity = new THREE.Vector2(0, 10000);
     constructor(private circles: VerletObject[], private centerSectionRect: DOMRect) {}
 
     update(frameCount:number, lastTime: number, centerSectionRect: DOMRect) {
@@ -42,7 +42,7 @@ export class VerletSolver {
             if (dist > radius - 10) {
                 const n = to_obj.clone().normalize();
 
-                obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
+                // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
                 obj.positionCurrent = position.clone().add(n.clone().multiplyScalar(radius - 10));
             }
         })
