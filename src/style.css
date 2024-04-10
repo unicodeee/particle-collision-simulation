@@ -19,11 +19,14 @@ body, html {
 .full-width {
   /*flex-grow: ;*/
   /*flex: 0 0 80%;*/
-  grid-row: span 2 / auto;
+  /*grid-row: span 2 / auto;*/
+  width: 600px;
+  height: 600px;
   background-color: #4a60da;
-  border-radius: 10px;
+  border-radius: 300px;
   margin: 10px;
-  display: flex;
+  position: relative;
+  /*display: flex;*/
 }
 
 .side-section {
@@ -33,19 +36,22 @@ body, html {
   margin: 10px;
 }
 
-.circle {
+.full-width .circle {
   position: absolute;
-  width: 10px; /* Adjust size as needed */
-  height: 10px; /* Adjust size as needed */
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  left: 50%; /* Set left position to 50% */
+  top: 50%; /* Set top position to 50% */
+  transform: translate(-50%, -50%); /* Move the element's center to the center of its container */
 }
 
-#out {
-  position: relative;
-  top: 200px;
-  width: 400px;
-  height: 200px;
-  border: 3px solid #73AD21;
-}
+/*#out {*/
+/*  position: relative;*/
+/*  top: 200px;*/
+/*  width: 400px;*/
+/*  height: 200px;*/
+/*  border: 3px solid #73AD21;*/
+/*}*/
 
 
 #fps-display {
@@ -61,10 +67,10 @@ body, html {
 }
 
 div.relative {
-  position: relative;
-  width: 400px;
-  height: 200px;
-  border: 3px solid #73AD21;
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 1px solid #73AD21;
 }
 
 div.absolute {
@@ -73,7 +79,7 @@ div.absolute {
   right: 0;
   width: 200px;
   height: 100px;
-  border: 3px solid #73AD21;
+  border: 3px solid #ad213b;
 }
 
 
