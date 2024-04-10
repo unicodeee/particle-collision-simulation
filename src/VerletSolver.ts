@@ -11,8 +11,44 @@ export class VerletSolver {
         const currentTime = performance.now(); // TO DO: move to update
         const dt = (currentTime - lastTime) / 1000; // Convert milliseconds to seconds
         this.applyGravity();
+
+        // sub stepping 8 times
         this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+        this.applyConstrains(centerSectionRect);
+        this.solveCollitions(this.circles);
+
         this.updatePositions(dt);
+
 
         lastTime = currentTime;
         return { lastTime };
@@ -46,11 +82,45 @@ export class VerletSolver {
                 obj.positionCurrent = position.clone().add(n.clone().multiplyScalar(radius - 10));
             }
         })
-
-
-
-
     }
+
+    solveCollitions(objContainer: VerletObject[]){
+
+
+        const small_circle_radius = 10;
+        const max_dist = small_circle_radius*2;
+
+        const count = this.circles.length;
+
+        for (let i = 0; i < count; i++) {
+            let c1 = this.circles[i];
+            for (let j = i + 1; j < count; j++) {
+
+                let c2 = this.circles[j];
+
+                const collision_axis = c1.positionCurrent.clone().sub(c2.positionCurrent);
+                const dist = collision_axis.length();
+                if (dist < max_dist) {
+                    const n  = collision_axis.normalize();
+                    const delta = max_dist - dist;
+
+                    n.multiplyScalar(0.5 * delta );
+                    c1.positionCurrent.add(n);
+                    c2.positionCurrent.sub(n);
+
+                }
+
+
+            }
+
+
+
+
+
+        }
+    }
+
+
 
 
 }
