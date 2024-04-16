@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const centerSectionRect = centerSection.getBoundingClientRect();
 
     const circles: VerletObject[] = [];
-    const numCircles = 200;
+    const numCircles = 10;
 
     circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.4*centerSectionRect.width, 0.5*centerSectionRect.height)));
     centerSection.appendChild(circles[circles.length - 1].element);
@@ -15,9 +15,6 @@ window.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < numCircles; i++) {
         circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.2*centerSectionRect.width, 0.5*centerSectionRect.height)));
         centerSection.appendChild(circles[circles.length - 1].element);
-        circles.forEach(c => {
-            c.draw();
-        })
     }
 
 
@@ -26,11 +23,14 @@ window.addEventListener('DOMContentLoaded', () => {
     let lastTime = performance.now();
     let frameCount = 0;
 
+    const edges: any[] = []; // Initialize edges array
+
+
     const fpsDisplay = document.getElementById('fps-display')!;
 
     async function moveCircles() {
         // ({ frameCount, lastTime } = showFPS(fpsDisplay, frameCount, lastTime));
-        ({ lastTime } = verletSolver.update(frameCount, lastTime, centerSectionRect));
+        ({ lastTime } = verletSolver.update(frameCount, lastTime, centerSectionRect, edges));
         requestAnimationFrame(moveCircles);
     }
 

@@ -22,8 +22,12 @@ export class VerletObject {
         this.element.src = '/circle.png';
         this.element.alt = 'Circle';
         this.element.className = 'circle';
-        this.radius = this.element.getBoundingClientRect().width;
+        // this.radius = this.element.getBoundingClientRect().width;
 
+        // Listen for the 'load' event to ensure the image has been fully loaded
+        this.element.addEventListener('load', () => {
+            this.radius = this.element.offsetWidth / 2; // Calculate the radius after the image has loaded
+        });
     }
 
 
