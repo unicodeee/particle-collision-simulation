@@ -9,13 +9,23 @@ window.addEventListener('DOMContentLoaded', () => {
     const circles: VerletObject[] = [];
     const numCircles = 10;
 
-    circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.4*centerSectionRect.width, 0.5*centerSectionRect.height)));
+    circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.5*centerSectionRect.width, 0.2*centerSectionRect.height)));
     centerSection.appendChild(circles[circles.length - 1].element);
 
+    // for (let i = 0; i < numCircles; i++) {
+    //     circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.2*centerSectionRect.width, 0.5*centerSectionRect.height)));
+    //     centerSection.appendChild(circles[circles.length - 1].element);
+    // }
+
     for (let i = 0; i < numCircles; i++) {
-        circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.2*centerSectionRect.width, 0.5*centerSectionRect.height)));
+        // Generate random positions within the centerSectionRect
+        let randomX = centerSectionRect.x + Math.random() * centerSectionRect.width;
+        let randomY = centerSectionRect.y + Math.random() * centerSectionRect.height;
+
+        circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(randomX, randomY)));
         centerSection.appendChild(circles[circles.length - 1].element);
     }
+
 
 
 

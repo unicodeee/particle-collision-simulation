@@ -4,8 +4,10 @@ import {VerletObject} from "./particles/VerletObj.ts";
 import {CircleEdge} from "./particles/CircleEdge.ts";
 
 export class VerletSolver {
-    gravity = new THREE.Vector2(0, 10000);
+    gravity = new THREE.Vector2(0, 5000);
     touching = new Set<VerletObject>();
+    position = new THREE.Vector2(0, 0);
+
     // edges: any[];
 
     edges: CircleEdge[] = [];
@@ -33,28 +35,17 @@ export class VerletSolver {
 
         const currentTime = performance.now(); // TO DO: move to update
         const dt = (currentTime - lastTime) / 1000; // Convert milliseconds to seconds
-        this.applyGravity();
 
-        // sub stepping 8 times
-        this.updateEdges();
-        this.solveColl(this.edges);
-        this.applyConstrains(centerSectionRect);
+        const sub_steps = 4;
+        const sub_dt = dt / sub_steps;
 
-        this.updateEdges();
-        this.solveColl(this.edges);
-        this.applyConstrains(centerSectionRect);
-
-        this.updateEdges();
-        this.solveColl(this.edges);
-        this.applyConstrains(centerSectionRect);
-
-        this.updateEdges();
-        this.solveColl(this.edges);
-        this.applyConstrains(centerSectionRect);
-
-
-        this.updatePositions(dt);
-
+        for (let i: number = 0; i < sub_steps; i++) {
+            this.applyGravity();
+            this.applyConstrains(centerSectionRect);
+            this.updateEdges();
+            this.solveColl(this.edges);
+            this.updatePositions(sub_dt);
+        }
 
         lastTime = currentTime;
         return { lastTime };
@@ -87,17 +78,22 @@ export class VerletSolver {
 
     applyConstrains(centerSection){ // circle
         const radius = Math.min(centerSection.width, centerSection.height)/2;
-        const position = new THREE.Vector2(radius, radius);
+        this.position = new THREE.Vector2(radius, radius);
 
         this.circles.forEach(c =>{
 
-            const to_obj = c.positionCurrent.clone().sub(position);
+            const to_obj = c.positionCurrent.clone().sub(this.position);
             const dist = to_obj.length();
-            if (dist > radius - c.radius) {
+            if (dist > radius + c.radius && !(dist > radius - c.radius)) {
+                const n = to_obj.clone().normalize();
+                c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - (to_obj.length() - c.radius)));
+                c.resetAcceleration()
+            }
+            else if (dist > radius - c.radius) {
                 const n = to_obj.clone().normalize();
 
                 // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
-                c.positionCurrent = position.clone().add(n.clone().multiplyScalar(radius - c.radius));
+                c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
             }
         })
     }
@@ -145,7 +141,6 @@ export class VerletSolver {
             n.multiplyScalar(0.5 * delta );
             c1.positionCurrent.add(n);
             c2.positionCurrent.sub(n);
-
         }
     }
 
@@ -155,7 +150,6 @@ export class VerletSolver {
         const c1Bott = object1.positionCurrent.y + object1.radius;
         const c2Top = object2.positionCurrent.y - object2.radius;
         const c2Bott = object2.positionCurrent.y + object2.radius;
-        console.log("c1Top < c2Bott && c1Bott > c2Top", c1Top < c2Bott && c1Bott > c2Top);
         if (c1Top < c2Bott && c1Bott > c2Top) {
             this.collide(object1, object2);
         }

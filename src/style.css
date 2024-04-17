@@ -38,8 +38,8 @@ body, html {
 
 .full-width .circle {
   position: absolute;
-  width: 10px; /* Adjust size as needed */
-  height: 10px; /* Adjust size as needed */
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
   left: 50%; /* Set left position to 50% */
   top: 50%; /* Set top position to 50% */
   transform: translate(-50%, -50%); /* Move the element's center to the center of its container */
