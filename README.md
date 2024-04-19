@@ -12,7 +12,7 @@ _______________________________________
 _______________________________________
 
 # To run project locally:
-1. First install npm
+1. First, install `npm`
 
 2. Run command
 ```angular2html
