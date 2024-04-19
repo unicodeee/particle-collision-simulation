@@ -36,7 +36,7 @@ export class VerletSolver {
         const currentTime = performance.now(); // TO DO: move to update
         const dt = (currentTime - lastTime) / 1000; // Convert milliseconds to seconds
 
-        const sub_steps = 4;
+        const sub_steps = 8;
         const sub_dt = dt / sub_steps;
 
         for (let i: number = 0; i < sub_steps; i++) {

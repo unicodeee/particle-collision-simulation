@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const centerSectionRect = centerSection.getBoundingClientRect();
 
     const circles: VerletObject[] = [];
-    const numCircles = 300;
+    const numCircles = 400;
 
     circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.5*centerSectionRect.width, 0.2*centerSectionRect.height)));
     centerSection.appendChild(circles[circles.length - 1].element);
@@ -33,14 +33,12 @@ window.addEventListener('DOMContentLoaded', () => {
     let lastTime = performance.now();
     let frameCount = 0;
 
-    const edges: any[] = []; // Initialize edges array
-
 
     const fpsDisplay = document.getElementById('fps-display')!;
 
     async function moveCircles() {
         // ({ frameCount, lastTime } = showFPS(fpsDisplay, frameCount, lastTime));
-        ({ lastTime } = verletSolver.update(frameCount, lastTime, centerSectionRect, edges));
+        ({ lastTime } = verletSolver.update(frameCount, lastTime, centerSectionRect));
         requestAnimationFrame(moveCircles);
     }
 

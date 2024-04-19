@@ -17,16 +17,15 @@ body, html {
 }
 
 .full-width {
-  /*flex-grow: ;*/
-  /*flex: 0 0 80%;*/
-  /*grid-row: span 2 / auto;*/
   width: 600px;
   height: 600px;
   background-color: #4a60da;
   border-radius: 300px;
-  margin: 10px;
-  position: relative;
-  /*display: flex;*/
+  margin: auto; /* Center horizontally */
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center horizontally and vertically */
 }
 
 .side-section {
@@ -45,13 +44,6 @@ body, html {
   transform: translate(-50%, -50%); /* Move the element's center to the center of its container */
 }
 
-/*#out {*/
-/*  position: relative;*/
-/*  top: 200px;*/
-/*  width: 400px;*/
-/*  height: 200px;*/
-/*  border: 3px solid #73AD21;*/
-/*}*/
 
 
 #fps-display {
