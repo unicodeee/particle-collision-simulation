@@ -4,7 +4,7 @@ import {VerletObject} from "./particles/VerletObj.ts";
 import {CircleEdge} from "./particles/CircleEdge.ts";
 
 export class VerletSolver {
-    gravity = new THREE.Vector2(0, 5000);
+    gravity = new THREE.Vector2(0, 1000);
     touching = new Set<VerletObject>();
     position = new THREE.Vector2(0, 0);
 

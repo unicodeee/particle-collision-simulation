@@ -7,7 +7,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const centerSectionRect = centerSection.getBoundingClientRect();
 
     const circles: VerletObject[] = [];
-    const numCircles = 10;
+    const numCircles = 300;
 
     circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.5*centerSectionRect.width, 0.2*centerSectionRect.height)));
     centerSection.appendChild(circles[circles.length - 1].element);
