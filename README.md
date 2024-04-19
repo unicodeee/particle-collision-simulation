@@ -1,14 +1,13 @@
 
 # Particle Collision System- Physic Simulation
-
+Live Demo: https://particle-collision-simulation.vercel.app/
+_______________________________________
 ## **Implementation Techniques:**
 
-**Gravity:** Verlet Integration
+**Gravity + particles' movement:** [Verlet Integration](https://pikuma.com/blog/verlet-integration-2d-cloth-physics-simulation)
 
-https://pikuma.com/blog/verlet-integration-2d-cloth-physics-simulation
+**Collision optimization algorthym**: [Sweep and prune](https://leanrada.com/notes/sweep-and-prune-2/)
 
-**Collision optimization algorthym**: Sweep and prune
-https://leanrada.com/notes/sweep-and-prune-2/
 
 _______________________________________
 
