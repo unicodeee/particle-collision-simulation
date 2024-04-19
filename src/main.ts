@@ -31,16 +31,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-    const verletSolver = new VerletSolver(circles, centerSectionRect);
+    const verletSolver = new VerletSolver(circles);
     let lastTime = performance.now();
-    let frameCount = 0;
+    // let frameCount = 0;
 
 
-    const fpsDisplay = document.getElementById('fps-display')!;
+    // const fpsDisplay = document.getElementById('fps-display')!;
 
     async function moveCircles() {
         // ({ frameCount, lastTime } = showFPS(fpsDisplay, frameCount, lastTime));
-        ({ lastTime } = verletSolver.update(frameCount, lastTime, centerSectionRect));
+        ({ lastTime } = verletSolver.update(lastTime, centerSectionRect));
 
 
 

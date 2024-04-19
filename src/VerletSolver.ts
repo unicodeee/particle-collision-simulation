@@ -11,12 +11,14 @@ export class VerletSolver {
     // edges: any[];
 
     edges: CircleEdge[] = [];
-    constructor(private circles: VerletObject[], private centerSectionRect: DOMRect) {
+    constructor(private circles: VerletObject[]) {
         // init edges
         this.edges = [];
         circles.map(circle => new Promise<void>(resolve => {
             circle.element.addEventListener('load', () => {
+                // @ts-ignore
                 const circleLeftEdge = circle.positionCurrent.x - circle.radius;
+                // @ts-ignore
                 const circleRightEdge = circle.positionCurrent.x + circle.radius;
 
                 this.edges.push({ position: circleLeftEdge, isLeft: true, object: circle } as CircleEdge);
@@ -31,8 +33,7 @@ export class VerletSolver {
 
 
 
-    update(frameCount:number, lastTime: number, centerSectionRect: DOMRect) {
-
+    update(lastTime: number, centerSectionRect: DOMRect) {
         const currentTime = performance.now(); // TO DO: move to update
         const dt = (currentTime - lastTime) / 1000; // Convert milliseconds to seconds
 
@@ -55,9 +56,11 @@ export class VerletSolver {
         this.edges.map(edge => {
             const circle =  edge.object;
             if (edge.isLeft) {
+                // @ts-ignore
                 edge.position = circle.positionCurrent.x - circle.radius;
             }
             else {
+                // @ts-ignore
                 edge.position = circle.positionCurrent.x + circle.radius;
             }
         })
@@ -76,24 +79,29 @@ export class VerletSolver {
         })
     }
 
-    applyConstrains(centerSection){ // circle
-        const radius = Math.min(centerSection.width, centerSection.height)/2;
+    applyConstrains(centerSectionRect: DOMRect){ // circle
+        const radius = Math.min(centerSectionRect.width, centerSectionRect.height)/2;
         this.position = new THREE.Vector2(radius, radius);
 
         this.circles.forEach(c =>{
 
             const to_obj = c.positionCurrent.clone().sub(this.position);
             const dist = to_obj.length();
+            // @ts-ignore
             if (dist > radius + c.radius && !(dist > radius - c.radius)) {
                 const n = to_obj.clone().normalize();
+                // @ts-ignore
                 c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - (to_obj.length() - c.radius)));
                 c.resetAcceleration()
             }
-            else if (dist > radius - c.radius) {
-                const n = to_obj.clone().normalize();
+            else { // @ts-ignore
+                if (dist > radius - c.radius) {
+                                const n = to_obj.clone().normalize();
 
-                // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
-                c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
+                                // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
+                                // @ts-ignore
+                    c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
+                            }
             }
         })
     }
@@ -103,6 +111,7 @@ export class VerletSolver {
     collide(c1: VerletObject, c2: VerletObject){
 
 
+        // @ts-ignore
         const max_dist = c1.radius + c2.radius;
 
         const collision_axis = c1.positionCurrent.clone().sub(c2.positionCurrent);
@@ -117,18 +126,22 @@ export class VerletSolver {
         }
     }
 
-    onOverlapX = function(object1, object2) {
+    onOverlapX(object1: VerletObject, object2: VerletObject) {
         // just check for y
+        // @ts-ignore
         const c1Top = object1.positionCurrent.y - object1.radius;
+        // @ts-ignore
         const c1Bott = object1.positionCurrent.y + object1.radius;
+        // @ts-ignore
         const c2Top = object2.positionCurrent.y - object2.radius;
+        // @ts-ignore
         const c2Bott = object2.positionCurrent.y + object2.radius;
         if (c1Top < c2Bott && c1Bott > c2Top) {
             this.collide(object1, object2);
         }
     }
 
-    solveColl(edges){
+    solveColl(edges: CircleEdge[] ){
 
         for (const edge of edges) {
                 if (edge.isLeft) {
