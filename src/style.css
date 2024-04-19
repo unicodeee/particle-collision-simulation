@@ -28,6 +28,10 @@ body, html {
   transform: translate(-50%, -50%); /* Center horizontally and vertically */
 }
 
+.full-width:hover {
+  cursor: pointer; /* Change cursor to pointer */
+}
+
 .side-section {
   flex: 1 0 20%;
   background-color: #ec8c8c;

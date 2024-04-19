@@ -4,7 +4,7 @@ import {VerletObject} from "./particles/VerletObj.ts";
 import {CircleEdge} from "./particles/CircleEdge.ts";
 
 export class VerletSolver {
-    gravity = new THREE.Vector2(0, 1000);
+    gravity = new THREE.Vector2(0, 5000);
     touching = new Set<VerletObject>();
     position = new THREE.Vector2(0, 0);
 
@@ -98,33 +98,6 @@ export class VerletSolver {
         })
     }
 
-    // solveCollitions(objContainer: VerletObject[]){
-    //
-    //     const count = this.circles.length;
-    //
-    //     for (let i = 0; i < count; i++) {
-    //         let c1 = this.circles[i];
-    //         for (let j = i + 1; j < count; j++) {
-    //
-    //             let c2 = this.circles[j];
-    //             const max_dist = c1.radius + c2.radius;
-    //
-    //             const collision_axis = c1.positionCurrent.clone().sub(c2.positionCurrent);
-    //             const dist = collision_axis.length();
-    //             if (dist < max_dist) {
-    //                 const n  = collision_axis.normalize();
-    //                 const delta = max_dist - dist;
-    //
-    //                 n.multiplyScalar(0.5 * delta );
-    //                 c1.positionCurrent.add(n);
-    //                 c2.positionCurrent.sub(n);
-    //
-    //             }
-    //
-    //
-    //         }
-    //     }
-    // }
 
 
     collide(c1: VerletObject, c2: VerletObject){
@@ -170,6 +143,28 @@ export class VerletSolver {
                 }
             // }
         }
+    }
+
+    flux(fluxCenter: THREE.Vector2){
+        const fluxStrength = 0.05; // Adjust the strength of the flux vector as needed
+
+        // Loop through the circles and check if they are within the affected area
+        this.circles.forEach(circle =>{
+            // circle.accelerate(new THREE.Vector2(0, 0.09));
+
+            const circleCenterX = circle.positionCurrent.x;
+            const circleCenterY = circle.positionCurrent.y;
+            const distance = fluxCenter.distanceTo(circle.positionCurrent);
+
+            // If the circle is within the affected area, apply a flux vector outwards
+            if (distance <= 200) { // Adjust the affected area as needed
+                const fluxX = (circleCenterX - fluxCenter.x) / distance * fluxStrength;
+                const fluxY = (circleCenterY - fluxCenter.y) / distance * fluxStrength;
+                // const outwardFlux = circle.positionCurrent.clone().sub(fluxCenter).multiplyScalar( 1 / (distance * fluxStrength));
+                circle.acceleration.add(new THREE.Vector2(fluxX, fluxY));
+            }
+        })
+        this.updatePositions(5);
     }
 
 

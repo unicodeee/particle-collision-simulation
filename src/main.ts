@@ -6,16 +6,18 @@ window.addEventListener('DOMContentLoaded', () => {
     const centerSection = document.getElementById('center-section')!;
     const centerSectionRect = centerSection.getBoundingClientRect();
 
+
+    centerSection.addEventListener('mousemove', (event) => {
+        const clickX = event.clientX - centerSection.offsetLeft + centerSectionRect.width / 2;
+        const clickY = event.clientY - centerSection.offsetTop + centerSectionRect.height / 2;
+
+        const fluxCenter = new THREE.Vector2(clickX, clickY);
+        verletSolver.flux(fluxCenter);
+
+    });
+
     const circles: VerletObject[] = [];
-    const numCircles = 400;
-
-    circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.5*centerSectionRect.width, 0.2*centerSectionRect.height)));
-    centerSection.appendChild(circles[circles.length - 1].element);
-
-    // for (let i = 0; i < numCircles; i++) {
-    //     circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(0.2*centerSectionRect.width, 0.5*centerSectionRect.height)));
-    //     centerSection.appendChild(circles[circles.length - 1].element);
-    // }
+    const numCircles = 200;
 
     for (let i = 0; i < numCircles; i++) {
         // Generate random positions within the centerSectionRect
@@ -39,6 +41,9 @@ window.addEventListener('DOMContentLoaded', () => {
     async function moveCircles() {
         // ({ frameCount, lastTime } = showFPS(fpsDisplay, frameCount, lastTime));
         ({ lastTime } = verletSolver.update(frameCount, lastTime, centerSectionRect));
+
+
+
         requestAnimationFrame(moveCircles);
     }
 
