@@ -8,8 +8,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     centerSection.addEventListener('mousemove', (event) => {
-        const clickX = event.clientX - centerSection.offsetLeft + centerSectionRect.width / 2;
-        const clickY = event.clientY - centerSection.offsetTop + centerSectionRect.height / 2;
+        const clickX = event.clientX - centerSection.offsetLeft;
+        const clickY = event.clientY - centerSection.offsetTop;
 
         const fluxCenter = new THREE.Vector2(clickX, clickY);
         verletSolver.flux(fluxCenter);
@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     const circles: VerletObject[] = [];
-    const numCircles = 200;
+    const numCircles = 300;
 
     for (let i = 0; i < numCircles; i++) {
         // Generate random positions within the centerSectionRect

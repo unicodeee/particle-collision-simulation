@@ -1,0 +1,272 @@
+$gap: 4vh;
+$padding: 4vh;
+$color: #48AAE4;
+$bp: (
+        mobile: 480px,
+        tablet: 768px,
+        desktop: 1440px,
+);
+
+@mixin query($display) {
+  @each $key, $value in $bp {
+    @if ($display == $key) {
+      @media (max-width: $value) {
+        @content;
+      }
+    }
+  }
+}
+
+* {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+
+  body {
+    width: 100%;
+    min-height: 100vh;
+    font-family: sans-serif;
+    font-size: 45px;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: $gap;
+  padding: $padding;
+
+  @include query(mobile) {
+    flex-direction: column;
+  }
+}
+
+.container-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: $gap;
+  padding: $padding;
+  flex-grow: 2;
+}
+
+.container-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: $gap;
+  padding: $padding;
+  flex-grow: 8;
+}
+
+[class ^="block-"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 4px solid $color;
+  height: 100vh - $padding * 2;
+
+  @include query(mobile) {
+    height: 50vh - $padding * 2;
+  }
+}
+
+.block-1 {
+  flex-grow: 2;
+  height: 10vh;
+}
+
+
+//.block-3 {
+//  flex-grow: 2;
+//  height: 50vh;
+//}
+
+
+
+/* CSS */
+.button-49,
+.button-49:after {
+  width: 150px;
+  height: 76px;
+  line-height: 78px;
+  font-size: 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  background: linear-gradient(45deg, transparent 5%, #FF013C 5%);
+  border: 0;
+  color: #fff;
+  letter-spacing: 3px;
+  box-shadow: 6px 0px 0px #00E6F6;
+  outline: transparent;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-49:after {
+  --slice-0: inset(50% 50% 50% 50%);
+  --slice-1: inset(80% -6px 0 0);
+  --slice-2: inset(50% -6px 30% 0);
+  --slice-3: inset(10% -6px 85% 0);
+  --slice-4: inset(40% -6px 43% 0);
+  --slice-5: inset(80% -6px 5% 0);
+
+  content: 'ALTERNATE TEXT';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 3%, #00E6F6 3%, #00E6F6 5%, #FF013C 5%);
+  text-shadow: -3px -3px 0px #F8F005, 3px 3px 0px #00E6F6;
+  clip-path: var(--slice-0);
+}
+
+.button-49:hover:after {
+  animation: 1s glitch;
+  animation-timing-function: steps(2, end);
+}
+
+@keyframes glitch {
+  0% {
+    clip-path: var(--slice-1);
+    transform: translate(-20px, -10px);
+  }
+  10% {
+    clip-path: var(--slice-3);
+    transform: translate(10px, 10px);
+  }
+  20% {
+    clip-path: var(--slice-1);
+    transform: translate(-10px, 10px);
+  }
+  30% {
+    clip-path: var(--slice-3);
+    transform: translate(0px, 5px);
+  }
+  40% {
+    clip-path: var(--slice-2);
+    transform: translate(-5px, 0px);
+  }
+  50% {
+    clip-path: var(--slice-3);
+    transform: translate(5px, 0px);
+  }
+  60% {
+    clip-path: var(--slice-4);
+    transform: translate(5px, 10px);
+  }
+  70% {
+    clip-path: var(--slice-2);
+    transform: translate(-10px, 10px);
+  }
+  80% {
+    clip-path: var(--slice-5);
+    transform: translate(20px, -10px);
+  }
+  90% {
+    clip-path: var(--slice-1);
+    transform: translate(-10px, 0px);
+  }
+  100% {
+    clip-path: var(--slice-1);
+    transform: translate(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .button-49,
+  .button-49:after {
+    width: 200px;
+    height: 86px;
+    line-height: 88px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #340606;
+}
+
+.grid-container {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 100px 100px 100px;
+  grid-auto-columns: 100px;
+  background-color: #fff;
+  color: #444;
+}
+
+.full-width {
+  justify-content: center;
+  width: 60%; /* Adjust width as needed */
+  height: 0; /* Set height to 0 */
+  padding-top: 60%; /* Set padding-top based on the width to maintain aspect ratio */
+  background-color: #4a60da;
+  border-radius: 50%; /* Set border-radius to half of the width */
+  margin: auto; /* Center horizontally */
+  position: relative; /* Change position to relative */
+}
+
+.full-width:hover {
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+.full-width .circle {
+  position: absolute;
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  left: 50%; /* Set left position to 50% */
+  top: 50%; /* Set top position to 50% */
+  transform: translate(-50%, -50%); /* Move the element's center to the center of its container */
+}
+
+
+
+#fps-display {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #340606;
+  transform: scale(5);
+}
+
+div.relative {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 1px solid #73AD21;
+}
+
+div.absolute {
+  position: absolute;
+  top: 80px;
+  right: 0;
+  width: 200px;
+  height: 100px;
+  border: 3px solid #ad213b;
+}
+
+
+@media screen and (max-width: 768px) {
+  .side-section {
+    flex-basis: auto;
+  }
+}
