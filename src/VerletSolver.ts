@@ -11,11 +11,17 @@ export class VerletSolver {
     // edges: any[];
 
     edges: CircleEdge[] = [];
-    constructor(private circles: VerletObject[], centerSection: any) {
+    circles: VerletObject[] = [];
+    constructor(centerSection: any) {
         // init edges
         this.centerSection = centerSection;
-        this.edges = [];
-        circles.map(circle => new Promise<void>(resolve => {
+        this.buildEdges();
+        this.edges.sort((a, b) => a.position - b.position);
+    }
+
+
+    buildEdges(){
+        this.circles.map(circle => new Promise<void>(resolve => {
             circle.element.addEventListener('load', () => {
                 // @ts-ignore
                 const circleLeftEdge = circle.positionCurrent.x - circle.radius;
@@ -24,14 +30,11 @@ export class VerletSolver {
 
                 this.edges.push({ position: circleLeftEdge, isLeft: true, object: circle } as CircleEdge);
                 this.edges.push({ position: circleRightEdge, isLeft: false, object: circle } as CircleEdge);
-
-
                 resolve();
             });
         }));
         this.edges.sort((a, b) => a.position - b.position);
     }
-
 
 
     update(lastTime: number, centerSectionRect: DOMRect) {
@@ -68,6 +71,20 @@ export class VerletSolver {
         this.edges.sort((a, b) => a.position - b.position);
     }
 
+    addCircle(){
+        // for (let i = 0; i < numCircles; i++) {
+        //     // Generate random positions within the centerSectionRect
+        //     let randomX =   centerSectionRect.x + Math.random() * centerSectionRect.width;
+        //     let randomY =   centerSectionRect.y + Math.random() * centerSectionRect.height;
+        //
+        // }
+        const centerSectionRect = this.centerSection.getBoundingClientRect();
+        const h = centerSectionRect.height*2;
+        const w = centerSectionRect.width*2;
+        this.circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(w, h)));
+        this.centerSection.appendChild(this.circles[this.circles.length - 1].element);
+    }
+
     applyGravity(){
         this.circles.forEach(circle =>{
             circle.accelerate(this.gravity);
@@ -84,41 +101,43 @@ export class VerletSolver {
 
         const centerSectionRect = this.centerSection.getBoundingClientRect();
 
-        // const radius = Math.min(centerSectionRect.width, centerSectionRect.height)/2;
-        // this.position = new THREE.Vector2(radius, radius);
-        //
-        // this.circles.forEach(c =>{
-        //
-        //     const to_obj = c.positionCurrent.clone().sub(this.position);
-        //     const dist = to_obj.length();
-        //     // @ts-ignore
-        //     if (dist > radius + c.radius && !(dist > radius - c.radius)) {
-        //         const n = to_obj.clone().normalize();
-        //         // @ts-ignore
-        //         c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - (to_obj.length() - c.radius)));
-        //         c.resetAcceleration()
-        //     }
-        //     else { // @ts-ignore
-        //         if (dist > radius - c.radius) {
-        //                         const n = to_obj.clone().normalize();
-        //
-        //                         // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
-        //                         // @ts-ignore
-        //             c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
-        //                     }
-        //     }
-        // })
 
+        // CIRCLE
+        const radius = Math.min(centerSectionRect.width, centerSectionRect.height)/2;
+        this.position = new THREE.Vector2(radius, radius);
 
-        this.circles.forEach(c => {
+        this.circles.forEach(c =>{
+
             const to_obj = c.positionCurrent.clone().sub(this.position);
-            const h = centerSectionRect.height;
-            const w = centerSectionRect.width;
-            if (to_obj.x <= 0){c.positionCurrent.x = - to_obj.x;}
-            if (to_obj.x >= w){c.positionCurrent.x = w - (to_obj.x - w);}
-            if (to_obj.y <= 0){c.positionCurrent.y = - to_obj.y;}
-            if (to_obj.y >= h){c.positionCurrent.y = h - (to_obj.y - h);}
+            const dist = to_obj.length();
+            // @ts-ignore
+            if (dist > radius + c.radius && !(dist > radius - c.radius)) {
+                const n = to_obj.clone().normalize();
+                // @ts-ignore
+                c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - (to_obj.length() - c.radius)));
+                c.resetAcceleration()
+            }
+            else { // @ts-ignore
+                if (dist > radius - c.radius) {
+                                const n = to_obj.clone().normalize();
+
+                                // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
+                                // @ts-ignore
+                    c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
+                            }
+            }
         })
+
+        // SQUARE
+        // this.circles.forEach(c => {
+        //     const to_obj = c.positionCurrent.clone().sub(this.position);
+        //     const h = centerSectionRect.height;
+        //     const w = centerSectionRect.width;
+        //     if (to_obj.x <= 0){c.positionCurrent.x = - to_obj.x;}
+        //     if (to_obj.x >= w){c.positionCurrent.x = w - (to_obj.x - w);}
+        //     if (to_obj.y <= 0){c.positionCurrent.y = - to_obj.y;}
+        //     if (to_obj.y >= h){c.positionCurrent.y = h - (to_obj.y - h);}
+        // })
     }
 
 
