@@ -7,12 +7,13 @@ export class VerletSolver {
     gravity = new THREE.Vector2(0, 5000);
     touching = new Set<VerletObject>();
     position = new THREE.Vector2(0, 0);
-
+    centerSection: any;
     // edges: any[];
 
     edges: CircleEdge[] = [];
-    constructor(private circles: VerletObject[]) {
+    constructor(private circles: VerletObject[], centerSection: any) {
         // init edges
+        this.centerSection = centerSection;
         this.edges = [];
         circles.map(circle => new Promise<void>(resolve => {
             circle.element.addEventListener('load', () => {
@@ -42,7 +43,7 @@ export class VerletSolver {
 
         for (let i: number = 0; i < sub_steps; i++) {
             this.applyGravity();
-            this.applyConstrains(centerSectionRect);
+            this.applyConstrains();
             this.updateEdges();
             this.solveColl(this.edges);
             this.updatePositions(sub_dt);
@@ -79,30 +80,44 @@ export class VerletSolver {
         })
     }
 
-    applyConstrains(centerSectionRect: DOMRect){ // circle
-        const radius = Math.min(centerSectionRect.width, centerSectionRect.height)/2;
-        this.position = new THREE.Vector2(radius, radius);
+    applyConstrains(){ // circle
 
-        this.circles.forEach(c =>{
+        const centerSectionRect = this.centerSection.getBoundingClientRect();
 
+        // const radius = Math.min(centerSectionRect.width, centerSectionRect.height)/2;
+        // this.position = new THREE.Vector2(radius, radius);
+        //
+        // this.circles.forEach(c =>{
+        //
+        //     const to_obj = c.positionCurrent.clone().sub(this.position);
+        //     const dist = to_obj.length();
+        //     // @ts-ignore
+        //     if (dist > radius + c.radius && !(dist > radius - c.radius)) {
+        //         const n = to_obj.clone().normalize();
+        //         // @ts-ignore
+        //         c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - (to_obj.length() - c.radius)));
+        //         c.resetAcceleration()
+        //     }
+        //     else { // @ts-ignore
+        //         if (dist > radius - c.radius) {
+        //                         const n = to_obj.clone().normalize();
+        //
+        //                         // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
+        //                         // @ts-ignore
+        //             c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
+        //                     }
+        //     }
+        // })
+
+
+        this.circles.forEach(c => {
             const to_obj = c.positionCurrent.clone().sub(this.position);
-            const dist = to_obj.length();
-            // @ts-ignore
-            if (dist > radius + c.radius && !(dist > radius - c.radius)) {
-                const n = to_obj.clone().normalize();
-                // @ts-ignore
-                c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - (to_obj.length() - c.radius)));
-                c.resetAcceleration()
-            }
-            else { // @ts-ignore
-                if (dist > radius - c.radius) {
-                                const n = to_obj.clone().normalize();
-
-                                // obj.positionOld = position.clone().add(n.clone().multiplyScalar(radius - 10));
-                                // @ts-ignore
-                    c.positionCurrent = this.position.clone().add(n.clone().multiplyScalar(radius - c.radius));
-                            }
-            }
+            const h = centerSectionRect.height;
+            const w = centerSectionRect.width;
+            if (to_obj.x <= 0){c.positionCurrent.x = - to_obj.x;}
+            if (to_obj.x >= w){c.positionCurrent.x = w - (to_obj.x - w);}
+            if (to_obj.y <= 0){c.positionCurrent.y = - to_obj.y;}
+            if (to_obj.y >= h){c.positionCurrent.y = h - (to_obj.y - h);}
         })
     }
 
@@ -179,8 +194,4 @@ export class VerletSolver {
         })
         this.updatePositions(5);
     }
-
-
-
-
 }

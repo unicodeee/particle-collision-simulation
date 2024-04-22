@@ -17,12 +17,12 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     const circles: VerletObject[] = [];
-    const numCircles = 300;
+    const numCircles = 10;
 
     for (let i = 0; i < numCircles; i++) {
         // Generate random positions within the centerSectionRect
-        let randomX = centerSectionRect.x + Math.random() * centerSectionRect.width;
-        let randomY = centerSectionRect.y + Math.random() * centerSectionRect.height;
+        let randomX =   centerSectionRect.x + Math.random() * centerSectionRect.width;
+        let randomY =   centerSectionRect.y + Math.random() * centerSectionRect.height;
 
         circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(randomX, randomY)));
         centerSection.appendChild(circles[circles.length - 1].element);
@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-    const verletSolver = new VerletSolver(circles);
+    const verletSolver = new VerletSolver(circles, centerSection);
     let lastTime = performance.now();
     // let frameCount = 0;
 
@@ -49,3 +49,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     moveCircles();
 });
+
+
+
