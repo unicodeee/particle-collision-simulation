@@ -8,10 +8,8 @@ export class VerletObject {
     radius: number | undefined;
 
     element: HTMLImageElement;
-    centerSectionRect: DOMRect;
 
-    constructor(centerSectionRect: DOMRect, position: THREE.Vector2) {
-        this.centerSectionRect = centerSectionRect;
+    constructor(position: THREE.Vector2) {
 
 
         this.positionOld = position.clone();
@@ -22,6 +20,8 @@ export class VerletObject {
         this.element.src = '/circle.png';
         this.element.alt = 'Circle';
         this.element.className = 'circle';
+
+        this.radius = 20; // default
         // this.radius = this.element.getBoundingClientRect().width;
 
         // Listen for the 'load' event to ensure the image has been fully loaded

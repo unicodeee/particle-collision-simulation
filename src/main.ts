@@ -1,10 +1,53 @@
-import {VerletSolver} from './VerletSolver';
+import { VerletSolver } from './VerletSolver';
 import * as THREE from 'three';
 
 window.addEventListener('DOMContentLoaded', () => {
     const centerSection = document.getElementById('center-section')!;
     const centerSectionRect = centerSection.getBoundingClientRect();
 
+    const verletSolver = new VerletSolver(centerSection);
+    let numCircles = 10;
+    let lastTime = performance.now();
+    let animationId: number | null = null;
+
+    function moveCircles() {
+        if (numCircles > 0) {
+            verletSolver.addCircle();
+            verletSolver.buildEdges();
+            numCircles -= 1;
+        }
+        ({ lastTime } = verletSolver.update(lastTime));
+        animationId = requestAnimationFrame(moveCircles);
+    }
+
+    function pauseAnimation() {
+        if (animationId !== null) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+        }
+    }
+
+    function resumeAnimation() {
+        if (animationId === null) {
+            lastTime = performance.now();
+            moveCircles();
+        }
+    }
+
+    // Handle visibility change
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            // Page is hidden, pause animation
+            pauseAnimation();
+        } else {
+            // Page is visible again, resume animation
+            resumeAnimation();
+        }
+    });
+
+    // Start animation when the page is loaded
+    moveCircles();
+    // Event listeners for shape buttons...
 
     centerSection.addEventListener('mousemove', (event) => {
         const clickX = event.clientX - centerSection.offsetLeft;
@@ -18,56 +61,25 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const squareButton = document.getElementById('square-container')!;
     squareButton.addEventListener('click', (event) => {
-        centerSection.style.borderRadius = '0'; // Set border radius to 0
+        centerSection.style.borderRadius = '0%'; // Set border radius to 0
+        verletSolver.containerState = "square";
     });
 
     const circleButton = document.getElementById('circle-container')!;
     circleButton.addEventListener('click', (event) => {
         centerSection.style.borderRadius = '50%'; // Set border radius to 0
+        verletSolver.containerState = "circle"
     });
 
-
-
-
-
-    // const circles: VerletObject[] = [];
-    let numCircles = 100;
-
-    // for (let i = 0; i < numCircles; i++) {
-    //     // Generate random positions within the centerSectionRect
-    //     let randomX =   centerSectionRect.x + Math.random() * centerSectionRect.width;
-    //     let randomY =   centerSectionRect.y + Math.random() * centerSectionRect.height;
-    //
-    //     circles.push(new VerletObject(centerSectionRect, new THREE.Vector2(randomX, randomY)));
-    //     centerSection.appendChild(circles[circles.length - 1].element);
-    // }
-
-
-
-
-    const verletSolver = new VerletSolver( centerSection);
-    let lastTime = performance.now();
-    // let frameCount = 0;
-
-
-    // const fpsDisplay = document.getElementById('fps-display')!;
-
-    async function moveCircles() {
-        // ({ frameCount, lastTime } = showFPS(fpsDisplay, frameCount, lastTime));
-        if (numCircles > 0 ) {
-            verletSolver.addCircle();
-            verletSolver.buildEdges()
-            numCircles -= 1
+    // Add event listener for the button click to add more circles
+    const addCirclesButton = document.getElementById('addCirclesButton')!;
+    addCirclesButton.addEventListener('click', (event) => {
+        const numCirclesInput = document.getElementById('numCirclesInput')! as HTMLInputElement;
+        const numToAdd = parseInt(numCirclesInput.value, 10); // Get the value from the input box
+        if (!isNaN(numToAdd) && numToAdd > 0) {
+            numCircles += numToAdd; // Increase the number of circles to add
+            // numCirclesInput.value = ''; // Clear the input box after adding circles
         }
-        ({ lastTime } = verletSolver.update(lastTime, centerSectionRect));
-
-
-
-        requestAnimationFrame(moveCircles);
-    }
-
-    moveCircles();
+    });
 });
-
-
 
