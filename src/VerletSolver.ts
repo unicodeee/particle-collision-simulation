@@ -51,7 +51,6 @@ export class VerletSolver {
             this.solveColl(this.edges);
             this.updatePositions(sub_dt);
         }
-
         lastTime = currentTime;
         return { lastTime };
     }

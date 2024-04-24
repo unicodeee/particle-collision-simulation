@@ -79,5 +79,9 @@ window.addEventListener('DOMContentLoaded', () => {
             numCircles += numToAdd; // Increase the number of circles to add
         }
     });
+
+    document.getElementById('github')!.addEventListener('click', function() {
+        window.open("https://github.com/unicodeee/particle-collision-simulation", "_blank");
+    });
 });
 
