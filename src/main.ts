@@ -3,7 +3,6 @@ import * as THREE from 'three';
 
 window.addEventListener('DOMContentLoaded', () => {
     const centerSection = document.getElementById('center-section')!;
-    const centerSectionRect = centerSection.getBoundingClientRect();
 
     const verletSolver = new VerletSolver(centerSection);
     let numCircles = 10;
@@ -60,25 +59,24 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
     const squareButton = document.getElementById('square-container')!;
-    squareButton.addEventListener('click', (event) => {
+    squareButton.addEventListener('click', () => {
         centerSection.style.borderRadius = '0%'; // Set border radius to 0
         verletSolver.containerState = "square";
     });
 
     const circleButton = document.getElementById('circle-container')!;
-    circleButton.addEventListener('click', (event) => {
+    circleButton.addEventListener('click', () => {
         centerSection.style.borderRadius = '50%'; // Set border radius to 0
         verletSolver.containerState = "circle"
     });
 
     // Add event listener for the button click to add more circles
     const addCirclesButton = document.getElementById('addCirclesButton')!;
-    addCirclesButton.addEventListener('click', (event) => {
+    addCirclesButton.addEventListener('click', () => {
         const numCirclesInput = document.getElementById('numCirclesInput')! as HTMLInputElement;
         const numToAdd = parseInt(numCirclesInput.value, 10); // Get the value from the input box
         if (!isNaN(numToAdd) && numToAdd > 0) {
             numCircles += numToAdd; // Increase the number of circles to add
-            // numCirclesInput.value = ''; // Clear the input box after adding circles
         }
     });
 });
