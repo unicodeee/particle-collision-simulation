@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import {VerletObject} from "./particles/VerletObj.ts";
 import {CircleEdge} from "./particles/CircleEdge.ts";
+import {Stick} from "./particles/Stick.ts";
 
 export class VerletSolver {
     gravity = new THREE.Vector2(0, 5000);
@@ -10,6 +11,7 @@ export class VerletSolver {
     containerState =  'circle';
     // edges: any[];
 
+    sticks: Stick[] = [];
     edges: CircleEdge[] = [];
     circles: VerletObject[] = [];
     constructor(centerSection: any) {
@@ -133,6 +135,45 @@ export class VerletSolver {
             });
         }
 
+        // CLOTH
+        else if (this.containerState == 'cloth'){
+
+            // hold object position still
+            this.circles[0].positionOld = (new THREE.Vector2(0, 0));
+            this.circles[0].positionCurrent.set(0, 0);
+            this.circles[0].resetAcceleration();
+
+            // hold object position still
+            this.circles[this.circles.length - 1].positionOld = (new THREE.Vector2(0, 0));
+            this.circles[this.circles.length - 1].positionCurrent.set(100, 0);
+            this.circles[this.circles.length - 1].resetAcceleration();
+
+            this.sticks.forEach((s) => {
+                const dist = s.p1.positionCurrent.distanceTo(s.p2.positionCurrent);
+                const D = s.length;  // Use the stick's intended length
+                if (dist != D) {
+                    // Calculate the difference vector between the two points
+                    let v_diff = s.p2.positionCurrent.clone().sub(s.p1.positionCurrent);
+
+                    // Calculate the correction vector
+                    let correction = v_diff.multiplyScalar((dist - D) / dist);
+
+                    // Apply half of the correction to each point
+                    s.p1.positionCurrent.add(correction.clone().multiplyScalar(0.5));
+                    s.p2.positionCurrent.sub(correction.multiplyScalar(0.5));
+                }
+            });
+
+
+
+            this.circles.forEach(c => {
+                const h = centerSectionRect.height;
+                const w = centerSectionRect.width;
+                // @ts-ignore
+                c.positionCurrent.clamp(new THREE.Vector2(0 + c.radius, 0 + c.radius), new THREE.Vector2(w - c.radius, h - c.radius));
+            });
+        }
+
 
 
     }
@@ -208,5 +249,33 @@ export class VerletSolver {
             }
         })
         this.updatePositions(5);
+    }
+
+    initCloth(){
+
+        // hold object position still
+        this.circles[0].positionOld = (new THREE.Vector2(0, 0));
+        this.circles[0].positionCurrent.set(0, 0);
+        this.circles[0].resetAcceleration();
+
+        for (let i: number = 1; i < this.circles.length; i++) {
+            const prevVector = this.circles[i - 1].positionCurrent.clone();
+            // @ts-ignore
+            prevVector.setX(this.circles[i - 1].positionCurrent.x + this.circles[i - 1].radius);
+            this.circles[i].positionCurrent.copy(new THREE.Vector2(prevVector.x, prevVector.y));
+
+        }
+    }
+    
+    initSticks() {
+
+        // @ts-ignore
+        const spacing = this.circles[0].radius * 2;
+
+        for (let n = 0; n < this.circles.length - 1; n ++) {
+            let stick = new Stick(this.circles[n], this.circles[n + 1], spacing);
+            this.sticks.push(stick);
+        }
+        
     }
 }
