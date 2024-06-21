@@ -16,8 +16,8 @@ export class VerletSolver {
     circles: VerletObject[] = [];
 
 
-    cloth_row: number;
-    cloth_col: number;
+    cloth_row!: number;
+    cloth_col!: number;
 
     constructor(centerSection: any) {
         // init edges
@@ -153,14 +153,15 @@ export class VerletSolver {
         else if (this.containerState === 'cloth') {
             // Hold the top-left corner
             const topLeftCircle = this.circles[0];
-            topLeftCircle.positionOld.set(0 + topLeftCircle.radius, 0 + topLeftCircle.radius);
-            topLeftCircle.positionCurrent.set(0 + topLeftCircle.radius, 0 + topLeftCircle.radius);
+            const R = topLeftCircle.radius ? topLeftCircle.radius : 0;
+            topLeftCircle.positionOld.set(0 + R, 0 + R);
+            topLeftCircle.positionCurrent.set(0 + R, 0 + R);
             topLeftCircle.resetAcceleration();
 
             // Hold the top-right corner
             const topRightCircle = this.circles[this.cloth_col - 1];
-            topRightCircle.positionOld.set(centerSectionRect.width - topLeftCircle.radius, 0 + topLeftCircle.radius);
-            topRightCircle.positionCurrent.set(centerSectionRect.width - topLeftCircle.radius, 0 + topLeftCircle.radius);
+            topRightCircle.positionOld.set(centerSectionRect.width - R, 0 + R);
+            topRightCircle.positionCurrent.set(centerSectionRect.width - R, 0 + R);
             topRightCircle.resetAcceleration();
 
             this.sticks.forEach(s => {
@@ -185,7 +186,7 @@ export class VerletSolver {
                 if (c !== topLeftCircle && c !== topRightCircle) {
                     const h = centerSectionRect.height;
                     const w = centerSectionRect.width;
-                    c.positionCurrent.clamp(new THREE.Vector2(c.radius - w, c.radius), new THREE.Vector2(w + w - c.radius, h + h - c.radius));
+                    c.positionCurrent.clamp(new THREE.Vector2(R - w, c.radius), new THREE.Vector2(w + w - R, h + h - R));
                 }
             });
         }
