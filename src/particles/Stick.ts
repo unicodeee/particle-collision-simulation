@@ -21,7 +21,7 @@ export class Stick {
 
 
 
-    updatePosition(dt: number) {
+    updatePosition() {
         this.resetAcceleration();
         this.draw();
     }
