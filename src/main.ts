@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const centerSection = document.getElementById('center-section')!;
 
     const verletSolver = new VerletSolver(centerSection);
-    let numCircles = 15;
+    let numCircles = 40;
     let lastTime = performance.now();
     let animationId: number | null = null;
 
@@ -73,10 +73,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const clothButton = document.getElementById('cloth-container')!;
     clothButton.addEventListener('click', () => {
         centerSection.style.borderRadius = '0%'; // Set border radius to 0
-        //
-        verletSolver.initCloth();
-        verletSolver.initSticks();
         verletSolver.containerState = "cloth";
+        //
+        verletSolver.set_cloth_properties();
+        verletSolver.initClothPointPosition();
+        verletSolver.initSticks();
     });
 
     // Add event listener for the button click to add more circles
@@ -86,6 +87,9 @@ window.addEventListener('DOMContentLoaded', () => {
         const numToAdd = parseInt(numCirclesInput.value, 10); // Get the value from the input box
         if (!isNaN(numToAdd) && numToAdd > 0) {
             numCircles += numToAdd; // Increase the number of circles to add
+        }
+        if (verletSolver.containerState === "cloth") {
+            clothButton.click();
         }
     });
 

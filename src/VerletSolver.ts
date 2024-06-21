@@ -14,11 +14,23 @@ export class VerletSolver {
     sticks: Stick[] = [];
     edges: CircleEdge[] = [];
     circles: VerletObject[] = [];
+
+
+    cloth_row: number;
+    cloth_col: number;
+
     constructor(centerSection: any) {
         // init edges
         this.centerSection = centerSection;
         this.buildEdges();
         this.edges.sort((a, b) => a.position - b.position);
+        this.set_cloth_properties();
+    }
+
+    set_cloth_properties() {
+        // this.cloth_col = Math.floor(this.circles.length / 3);
+        this.cloth_col = 10;
+        this.cloth_row = Math.floor(this.circles.length / this.cloth_col);
     }
 
 
@@ -50,7 +62,9 @@ export class VerletSolver {
             this.applyGravity();
             this.applyConstrains();
             this.updateEdges();
-            this.solveColl(this.edges);
+            if (this.containerState !== 'cloth') {
+                this.solveColl(this.edges);
+            }
             this.updatePositions(sub_dt);
         }
         lastTime = currentTime;
@@ -136,44 +150,45 @@ export class VerletSolver {
         }
 
         // CLOTH
-        else if (this.containerState == 'cloth'){
+        else if (this.containerState === 'cloth') {
+            // Hold the top-left corner
+            const topLeftCircle = this.circles[0];
+            topLeftCircle.positionOld.set(0 + topLeftCircle.radius, 0 + topLeftCircle.radius);
+            topLeftCircle.positionCurrent.set(0 + topLeftCircle.radius, 0 + topLeftCircle.radius);
+            topLeftCircle.resetAcceleration();
 
-            // hold object position still
-            this.circles[0].positionOld = (new THREE.Vector2(0, 0));
-            this.circles[0].positionCurrent.set(0, 0);
-            this.circles[0].resetAcceleration();
+            // Hold the top-right corner
+            const topRightCircle = this.circles[this.cloth_col - 1];
+            topRightCircle.positionOld.set(centerSectionRect.width - topLeftCircle.radius, 0 + topLeftCircle.radius);
+            topRightCircle.positionCurrent.set(centerSectionRect.width - topLeftCircle.radius, 0 + topLeftCircle.radius);
+            topRightCircle.resetAcceleration();
 
-            // hold object position still
-            this.circles[this.circles.length - 1].positionOld = (new THREE.Vector2(0, 0));
-            this.circles[this.circles.length - 1].positionCurrent.set(100, 0);
-            this.circles[this.circles.length - 1].resetAcceleration();
-
-            this.sticks.forEach((s) => {
+            this.sticks.forEach(s => {
                 const dist = s.p1.positionCurrent.distanceTo(s.p2.positionCurrent);
-                const D = s.length;  // Use the stick's intended length
-                if (dist != D) {
-                    // Calculate the difference vector between the two points
-                    let v_diff = s.p2.positionCurrent.clone().sub(s.p1.positionCurrent);
+                const D = s.length; // Use the stick's intended length
 
-                    // Calculate the correction vector
-                    let correction = v_diff.multiplyScalar((dist - D) / dist);
+                if (dist !== D) {
+                    const v_diff = s.p2.positionCurrent.clone().sub(s.p1.positionCurrent);
+                    const correction = v_diff.multiplyScalar((dist - D) / dist);
 
-                    // Apply half of the correction to each point
-                    s.p1.positionCurrent.add(correction.clone().multiplyScalar(0.5));
-                    s.p2.positionCurrent.sub(correction.multiplyScalar(0.5));
+                    // Apply half of the correction to each point, but skip fixed points
+                    if (s.p1 !== topLeftCircle && s.p1 !== topRightCircle) {
+                        s.p1.positionCurrent.add(correction.clone().multiplyScalar(0.5));
+                    }
+                    if (s.p2 !== topLeftCircle && s.p2 !== topRightCircle) {
+                        s.p2.positionCurrent.sub(correction.multiplyScalar(0.5));
+                    }
                 }
             });
 
-
-
             this.circles.forEach(c => {
-                const h = centerSectionRect.height;
-                const w = centerSectionRect.width;
-                // @ts-ignore
-                c.positionCurrent.clamp(new THREE.Vector2(0 + c.radius, 0 + c.radius), new THREE.Vector2(w - c.radius, h - c.radius));
+                if (c !== topLeftCircle && c !== topRightCircle) {
+                    const h = centerSectionRect.height;
+                    const w = centerSectionRect.width;
+                    c.positionCurrent.clamp(new THREE.Vector2(c.radius - w, c.radius), new THREE.Vector2(w + w - c.radius, h + h - c.radius));
+                }
             });
         }
-
 
 
     }
@@ -251,31 +266,61 @@ export class VerletSolver {
         this.updatePositions(5);
     }
 
-    initCloth(){
+    initClothPointPosition() {
+        for (let row = 0; row < this.cloth_row; row++) {
+            for (let col = 0; col < this.cloth_col; col++) {
+                const currentIndex = row * this.cloth_col + col;
+                if (currentIndex >= this.circles.length) continue; // Skip if index exceeds circles length
 
-        // hold object position still
-        this.circles[0].positionOld = (new THREE.Vector2(0, 0));
-        this.circles[0].positionCurrent.set(0, 0);
-        this.circles[0].resetAcceleration();
-
-        for (let i: number = 1; i < this.circles.length; i++) {
-            const prevVector = this.circles[i - 1].positionCurrent.clone();
-            // @ts-ignore
-            prevVector.setX(this.circles[i - 1].positionCurrent.x + this.circles[i - 1].radius);
-            this.circles[i].positionCurrent.copy(new THREE.Vector2(prevVector.x, prevVector.y));
-
+                const currentCircle = this.circles[currentIndex];
+                // @ts-ignore
+                const x = col * currentCircle.radius * 2;
+                // @ts-ignore
+                const y = row * currentCircle.radius * 2;
+                currentCircle.positionCurrent.set(x, y);
+            }
         }
     }
-    
+
+
+// 0               0 1 2 3           col=4
+// 1               0 0 0 0
+// 2               0 0 0 0    i * col    (i + 1) * (col)
+// 3               0 0
+// row=4
     initSticks() {
-
+        this.sticks = [];
+        const firstCircle = this.circles[0];
+        // Assume spacing is determined by the radius, adjust as needed
         // @ts-ignore
-        const spacing = this.circles[0].radius * 2;
 
-        for (let n = 0; n < this.circles.length - 1; n ++) {
-            let stick = new Stick(this.circles[n], this.circles[n + 1], spacing);
-            this.sticks.push(stick);
+        // (this.circles[this.cloth_col - 1].positionCurrent.x - this.circles[0].positionCurrent.x ) / (this.cloth_col - 1)
+        const spacing = firstCircle ? firstCircle.radius * 5 : 0;
+
+        if (spacing) {
+            for (let row = 0; row < this.cloth_row; row++) {
+                for (let col = 0; col < this.cloth_col; col++) {
+                    const currentIndex = row * this.cloth_col + col;
+
+                    // Ensure the current index is within bounds
+                    if (currentIndex >= this.circles.length) continue;
+
+                    const rightIndex = currentIndex + 1;
+                    const belowIndex = currentIndex + this.cloth_col;
+
+                    // Horizontal stick (to the right)
+                    if (col < this.cloth_col - 1 && rightIndex < this.circles.length) {
+                        this.sticks.push(new Stick(this.circles[currentIndex], this.circles[rightIndex], spacing));
+                    }
+
+                    // Vertical stick (to the bottom)
+                    if (row < this.cloth_row - 1 && belowIndex < this.circles.length) {
+                        this.sticks.push(new Stick(this.circles[currentIndex], this.circles[belowIndex], spacing));
+                    }
+                }
+            }
         }
-        
+
+        console.log(this.sticks);
     }
 }
