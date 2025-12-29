@@ -186,7 +186,8 @@ export class VerletSolver {
 
     // Flux: apply a short-lived repulsive acceleration from a point
     flux(pos: THREE.Vector2) {
-        const strength = 20000;
+
+        const strength = 200000000;
         this.circles.forEach(c => {
             const dx = c.positionCurrent.x - pos.x;
             const dy = c.positionCurrent.y - pos.y;
@@ -194,6 +195,8 @@ export class VerletSolver {
             const falloff = Math.max(1, d2);
             const force = strength / falloff;
             const dir = new THREE.Vector2(dx, dy).normalize();
+
+            // console.log(dir.multiplyScalar(force))
             c.accelerate(dir.multiplyScalar(force));
         });
     }
