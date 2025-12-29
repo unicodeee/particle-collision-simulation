@@ -1,66 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Particle Animation</title>
-  <link rel="stylesheet" href="/src/style.scss" />
-
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Particle Animation</title>
+    <link rel="stylesheet" href="/src/style.scss"/>
 
 
 </head>
 <body>
 
-    <div class="container">
-        <div class="container-left">
+<div class="container">
+    <div class="container-left">
 
-            <div id="circle-container" class="block-1">
-                <button class="button-56" role="button">
-                    <span class="text">Circle</span>
-                </button>
-            </div>
+        <div id="instruction-container" class="block-1">
+                <span class="button-56">
+                    <span class="text">
+                        <ul>
+                          <li>Use buttons below to switch different mode</li>
+                          <li>Move your "Mouse" to the particles to interact</li>
+                        </ul>
 
-            <div id="square-container" class="block-1">
-                <button class="button-56" role="button">
-                    <span class="text">Square</span>
-                </button>
-            </div>
+                    </span>
 
-            <div id="cloth-container" class="block-1">
-                <button class="button-56" role="button">
-                    <span class="text">Cloth</span>
-                </button>
-            </div>
-
-            <div class="block-1">
-                <div>
-                    <button class="button-56" id="addCirclesButton" role="button">
-                        <span class="text">Add</span>
-                    </button>
-                    <input type="number" id="numCirclesInput" placeholder="Enter number of circles" value="100">
-                </div>
-            </div>
-
-
-            <div class="block-1">
-                <div>
-                    <button class="button-56 link" id="github" style="color: #ad213b" role="button">
-                        <span href="https://github.com/unicodeee/particle-collision-simulation" class="text">Github</span>
-                    </button>
-                </div>
-            </div>
-
+                </span>
         </div>
 
-        <div class="container-right">
-            <div id="center-section" class="full-width"></div>
+
+        <div id="circle-container" class="block-1">
+            <button class="button-56" role="button">
+                <span class="text">Circle Boundary</span>
+            </button>
         </div>
+
+        <div id="square-container" class="block-1">
+            <button class="button-56" role="button">
+                <span class="text">Square Boundary</span>
+            </button>
+        </div>
+
+        <div id="cloth-container" class="block-1">
+            <button class="button-56" role="button">
+                <span class="text">Cloth Simulation</span>
+            </button>
+        </div>
+
+        <div class="block-1">
+            <div>
+                <button class="button-56" id="addCirclesButton" role="button">
+                    <span class="text">Add</span>
+                </button>
+                <input type="number" id="numCirclesInput" placeholder="Enter number of circles" value="100">
+            </div>
+        </div>
+
+
+        <div class="block-1">
+            <div>
+                <button class="button-56 link" id="github" style="color: #ad213b" role="button">
+                    <span href="https://github.com/unicodeee/particle-collision-simulation" class="text">Github</span>
+                </button>
+            </div>
+        </div>
+
     </div>
 
+    <div class="container-right">
+        <div id="center-section" class="full-width"></div>
+    </div>
+</div>
 
-    <script type="module" src="/src/particles/Circle.ts" type="module"></script>
-    <script type="module" src="/src/FPS.ts" type="module"></script>
-    <script type="module" src="/src/main.ts"></script>
+
+<script type="module" src="/src/particles/Circle.ts" type="module"></script>
+<script type="module" src="/src/FPS.ts" type="module"></script>
+<script type="module" src="/src/main.ts"></script>
 
 </body>
 </html>

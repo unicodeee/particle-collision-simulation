@@ -25,8 +25,24 @@ export class VerletSolver {
     }
 
     set_cloth_properties() {
-        this.cloth_col = 10;
-        this.cloth_row = Math.floor(this.circles.length / Math.max(1, this.cloth_col));
+        this.cloth_col = 20;
+        this.cloth_row = Math.ceil(this.circles.length / this.cloth_col);
+
+        const spacing = 20; // distance between particles
+        const startX = 0;
+        const startY = 0;
+
+        this.circles.forEach((c, i) => {
+            c.radius = 10;
+
+            const col = i % this.cloth_col;
+            const row = Math.floor(i / this.cloth_col);
+
+            c.positionCurrent = new THREE.Vector2(
+                startX + col * spacing,
+                startY + row * spacing
+            );
+        });
     }
 
     // basic helpers
@@ -79,9 +95,16 @@ export class VerletSolver {
         // start near the top-left, randomized
         const x = Math.random() * w;
         const y = Math.random() * h;
-        const radius = 8 + Math.floor(Math.random() * 18);
+        const radius = 8 + Math.floor(5);
         const newCircle = new VerletObject(new THREE.Vector2(x, y), radius);
         this.circles.push(newCircle);
+
+
+        // if click add circle when is cloth mode
+        this.set_cloth_properties();
+        this.initClothPointPosition();
+        this.initSticks();
+
     }
 
     applyGravity() {
@@ -91,7 +114,7 @@ export class VerletSolver {
     }
 
     applyConstrains() {
-
+        const centerSectionRect = this.centerSection.getBoundingClientRect();
 
         if (this.containerState === 'circle') {
 
@@ -141,8 +164,47 @@ export class VerletSolver {
         }
 
         else if (this.containerState === 'cloth') {
+            // Hold the top-left corner
+            const topLeftCircle = this.circles[0];
+            const R = topLeftCircle.radius ? topLeftCircle.radius : 0;
+            topLeftCircle.positionOld.set(0 + R, 0 + R);
+            topLeftCircle.positionCurrent.set(0 + R, 0 + R);
+            topLeftCircle.resetAcceleration();
 
+            // Hold the top-right corner
+            const topRightCircle = this.circles[this.cloth_col - 1];
+            topRightCircle.positionOld.set(centerSectionRect.width - R, 0 + R);
+            topRightCircle.positionCurrent.set(centerSectionRect.width - R, 0 + R);
+            topRightCircle.resetAcceleration();
+
+            this.sticks.forEach(s => {
+                const dist = s.p1.positionCurrent.distanceTo(s.p2.positionCurrent);
+                const D = s.length; // Use the stick's intended length
+
+                if (dist !== D) {
+                    const v_diff = s.p2.positionCurrent.clone().sub(s.p1.positionCurrent);
+                    const correction = v_diff.multiplyScalar((dist - D) / dist);
+
+                    // Apply half of the correction to each point, but skip fixed points
+                    if (s.p1 !== topLeftCircle && s.p1 !== topRightCircle) {
+                        s.p1.positionCurrent.add(correction.clone().multiplyScalar(0.5));
+                    }
+                    if (s.p2 !== topLeftCircle && s.p2 !== topRightCircle) {
+                        s.p2.positionCurrent.sub(correction.multiplyScalar(0.5));
+                    }
+                }
+            });
+
+            this.circles.forEach(c => {
+                if (c !== topLeftCircle && c !== topRightCircle) {
+                    const h = centerSectionRect.height;
+                    const w = centerSectionRect.width;
+                    c.positionCurrent.clamp(new THREE.Vector2(R - w, c.radius), new THREE.Vector2(w + w - R, h + h - R));
+                }
+            });
         }
+
+
 
     }
 
@@ -203,10 +265,54 @@ export class VerletSolver {
 
     // Cloth-related stubs (left minimal — you can reuse and port your existing cloth setup here)
     initClothPointPosition() {
-        // Implement cloth initialization using VerletObject instances if you need cloth mode
+        for (let row = 0; row < this.cloth_row; row++) {
+            for (let col = 0; col < this.cloth_col; col++) {
+                const currentIndex = row * this.cloth_col + col;
+                if (currentIndex >= this.circles.length) continue; // Skip if index exceeds circles length
+
+                const currentCircle = this.circles[currentIndex];
+                // @ts-ignore
+                const x = col * currentCircle.radius * 2;
+                // @ts-ignore
+                const y = row * currentCircle.radius * 2;
+                currentCircle.positionCurrent.set(x, y);
+            }
+        }
     }
 
     initSticks() {
-        // create Stick instances and push to this.sticks
+        this.sticks = [];
+        const firstCircle = this.circles[0];
+        // Assume spacing is determined by the radius, adjust as needed
+        // @ts-ignore
+
+        // (this.circles[this.cloth_col - 1].positionCurrent.x - this.circles[0].positionCurrent.x ) / (this.cloth_col - 1)
+        const spacing = firstCircle ? firstCircle.radius * 3 : 0;
+
+        if (spacing) {
+            for (let row = 0; row < this.cloth_row; row++) {
+                for (let col = 0; col < this.cloth_col; col++) {
+                    const currentIndex = row * this.cloth_col + col;
+
+                    // Ensure the current index is within bounds
+                    if (currentIndex >= this.circles.length) continue;
+
+                    const rightIndex = currentIndex + 1;
+                    const belowIndex = currentIndex + this.cloth_col;
+
+                    // Horizontal stick (to the right)
+                    if (col < this.cloth_col - 1 && rightIndex < this.circles.length) {
+                        this.sticks.push(new Stick(this.circles[currentIndex], this.circles[rightIndex], spacing));
+                    }
+
+                    // Vertical stick (to the bottom)
+                    if (row < this.cloth_row - 1 && belowIndex < this.circles.length) {
+                        this.sticks.push(new Stick(this.circles[currentIndex], this.circles[belowIndex], spacing));
+                    }
+                }
+            }
+        }
+
+        // console.log(this.sticks);
     }
 }

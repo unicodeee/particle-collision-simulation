@@ -191,3 +191,12 @@ div.absolute {
     padding: 0.25em 0.75em;
   }
 }
+
+
+.text {
+  display: inline-block;
+  max-width: 18ch; /* ~3–4 words depending on length */
+  line-height: 1.4;
+  white-space: normal;
+  text-align: center;
+}
