@@ -1,10 +1,14 @@
 import { VerletSolver } from './VerletSolver';
+import { CanvasRenderer } from './renderer/CanvasRenderer.ts';
 import * as THREE from 'three';
 
 window.addEventListener('DOMContentLoaded', () => {
     const centerSection = document.getElementById('center-section')!;
 
-    const verletSolver = new VerletSolver(centerSection);
+    // create single canvas renderer for entire simulation
+    const renderer = new CanvasRenderer(centerSection);
+
+    const verletSolver = new VerletSolver(centerSection, renderer);
     let numCircles = 40;
     let lastTime = performance.now();
     let animationId: number | null = null;
@@ -36,57 +40,51 @@ window.addEventListener('DOMContentLoaded', () => {
     // Handle visibility change
     document.addEventListener('visibilitychange', () => {
         if (document.hidden) {
-            // Page is hidden, pause animation
             pauseAnimation();
         } else {
-            // Page is visible again, resume animation
             resumeAnimation();
         }
     });
 
     // Start animation when the page is loaded
     moveCircles();
-    // Event listeners for shape buttons...
 
     centerSection.addEventListener('mousemove', (event) => {
-        const clickX = event.clientX - centerSection.offsetLeft;
-        const clickY = event.clientY - centerSection.offsetTop;
+        const rect = centerSection.getBoundingClientRect();
+        const clickX = event.clientX - rect.left;
+        const clickY = event.clientY - rect.top;
 
         const fluxCenter = new THREE.Vector2(clickX, clickY);
         verletSolver.flux(fluxCenter);
-
     });
-
 
     const squareButton = document.getElementById('square-container')!;
     squareButton.addEventListener('click', () => {
-        centerSection.style.borderRadius = '0%'; // Set border radius to 0
+        centerSection.style.borderRadius = '0%';
         verletSolver.containerState = "square";
     });
 
     const circleButton = document.getElementById('circle-container')!;
     circleButton.addEventListener('click', () => {
-        centerSection.style.borderRadius = '50%'; // Set border radius to 0
-        verletSolver.containerState = "circle"
+        centerSection.style.borderRadius = '50%';
+        verletSolver.containerState = "circle";
     });
 
     const clothButton = document.getElementById('cloth-container')!;
     clothButton.addEventListener('click', () => {
-        centerSection.style.borderRadius = '0%'; // Set border radius to 0
+        centerSection.style.borderRadius = '0%';
         verletSolver.containerState = "cloth";
-        //
         verletSolver.set_cloth_properties();
         verletSolver.initClothPointPosition();
         verletSolver.initSticks();
     });
 
-    // Add event listener for the button click to add more circles
     const addCirclesButton = document.getElementById('addCirclesButton')!;
     addCirclesButton.addEventListener('click', () => {
         const numCirclesInput = document.getElementById('numCirclesInput')! as HTMLInputElement;
-        const numToAdd = parseInt(numCirclesInput.value, 10); // Get the value from the input box
+        const numToAdd = parseInt(numCirclesInput.value, 10);
         if (!isNaN(numToAdd) && numToAdd > 0) {
-            numCircles += numToAdd; // Increase the number of circles to add
+            numCircles += numToAdd;
         }
         if (verletSolver.containerState === "cloth") {
             clothButton.click();
@@ -97,4 +95,3 @@ window.addEventListener('DOMContentLoaded', () => {
         window.open("https://github.com/unicodeee/particle-collision-simulation", "_blank");
     });
 });
-
