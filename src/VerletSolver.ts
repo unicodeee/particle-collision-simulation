@@ -55,11 +55,12 @@ export class VerletSolver {
 
         for (let i = 0; i < sub_steps; i++) {
             this.applyGravity();
-            this.applyConstrains();
+            this.applyConstrains(); // solve circle go out boundary (round, square, cloth sim)
             // choose collision method: sweep/prune would be better, but for simplicity use pairwise here
-            if (this.containerState !== 'cloth') {
-                this.solveCollisions();
-            }
+            // if (this.containerState !== 'cloth') {
+            //
+            // }
+            this.solveCollisions();// solve circles collide
             this.updatePositions(sub_dt);
         }
 
@@ -90,18 +91,59 @@ export class VerletSolver {
     }
 
     applyConstrains() {
-        // keep particles within container bounds (reflective)
-        const rect = this.centerSection.getBoundingClientRect();
-        const w = rect.width;
-        const h = rect.height;
-        this.circles.forEach(c => {
-            // simple bounds; adjust positionCurrent if outside
 
 
-            const minBoundary = new THREE.Vector2(c.radius, c.radius);
-            const maxBoundary = new THREE.Vector2(w - c.radius, h - c.radius);
-            c.positionCurrent.clamp(minBoundary, maxBoundary);
-        });
+        if (this.containerState === 'circle') {
+
+            // Clamp vector length (radial clamp)
+            function clampVector2Radial(v: THREE.Vector2, maxRadius: number) {
+                if (v.lengthSq() > maxRadius * maxRadius) {
+                    v.setLength(maxRadius);
+                }
+                return v;
+            }
+
+            const rect = this.centerSection.getBoundingClientRect();
+            const radius = rect.width * 0.5;
+
+            // center of the circle in local coordinates
+            const center = new THREE.Vector2(radius, radius);
+
+            this.circles.forEach(c => {
+
+                // offset from center
+                const offset = c.positionCurrent.clone().sub(center);
+
+                // clamp offset inside the circle
+                clampVector2Radial(offset, radius - c.radius);
+
+                // recompute position
+                c.positionCurrent.copy(center).add(offset);
+            });
+        }
+
+
+
+        else if (this.containerState === 'square') {
+            // keep particles within container bounds (reflective)
+            const rect = this.centerSection.getBoundingClientRect();
+            const w = rect.width;
+            const h = rect.height;
+            this.circles.forEach(c => {
+                // simple bounds; adjust positionCurrent if outside
+
+
+                const minBoundary = new THREE.Vector2(c.radius, c.radius);
+                const maxBoundary = new THREE.Vector2(w - c.radius, h - c.radius);
+                c.positionCurrent.clamp(minBoundary, maxBoundary);
+            });
+
+        }
+
+        else if (this.containerState === 'cloth') {
+
+        }
+
     }
 
     solveCollisions() {
